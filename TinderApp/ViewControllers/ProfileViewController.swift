@@ -6,9 +6,14 @@
 //
 
 import UIKit
+import FirebaseAuth
+import PKHUD
+import RxSwift
+import RxCocoa
 
 class ProfileViewController: UIViewController {
     private let cellId = "cellId"
+    private let disposeBag = DisposeBag()
     var user: User?
     
     //MARK:UIViews
@@ -31,7 +36,7 @@ class ProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        setupBindings()
         setupLayout()
     }
 
@@ -57,7 +62,36 @@ class ProfileViewController: UIViewController {
         nameLabel.text = user?.name
         
     }
+    
+    private func setupBindings(){
+        logoutButton.rx.tap
+            .asDriver()
+            .drive{[weak self] _ in
+                HUD.show(.progress)
+                Auth.tappedLogoutButton{(success) in
+                    HUD.hide()
+                    if success {
+                        DispatchQueue.main.asyncAfter(deadline: .now()+0.5){
+                             let registerController = RegisterViewController()
+                             let nav = UINavigationController(rootViewController: registerController)
+                             nav.modalPresentationStyle = .fullScreen
+                            self?.present(nav, animated: true)
+                        }
+                    }else{
+                    let alert = UIAlertController(title: "エラー",
+                                message: "ログアウトできませんでした",
+                                preferredStyle: UIAlertController.Style.alert)
+                            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                            self?.present(alert, animated: true, completion: nil)
+                    }
+                }
+            }
+            .disposed(by: disposeBag)
+    }
 }
+
+
+
 
 //MARK:UICollectionView-Delegate,DataSource
 extension ProfileViewController:UICollectionViewDelegate, UICollectionViewDataSource{

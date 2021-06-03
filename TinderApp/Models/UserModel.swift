@@ -11,6 +11,7 @@ import Firebase
 class User{
     var email: String
     var name: String
+    
     var creditAt: Timestamp
     
     init(dic: [String: Any]) {

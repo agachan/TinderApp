@@ -4,9 +4,8 @@
 //
 //  Created by AGA TOMOHIRO on 2021/06/03.
 //
-
+import UIKit
 import Firebase
-import PKHUD
 
 extension Auth{
     //MARK:CreateUserOnFirebaseAuth
@@ -40,6 +39,15 @@ extension Auth{
         }
     }
     
+    static func tappedLogoutButton(completion: @escaping (Bool)-> Void){
+        do{ try Auth.auth().signOut()
+            print("Success logout your account")
+            completion(true)
+        } catch {
+            print("You cannot logout your account",error)
+            completion(false)
+        }
+    }
 }
 
 extension Firestore{

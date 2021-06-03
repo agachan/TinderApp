@@ -21,12 +21,6 @@ class HomeViewController: UIViewController {
     let cardView = UIView()
     let buttomButton = ButtomControlView()
     
-    let logoutButton:UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("ログアウト", for: .normal)
-        return button
-    }()
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -78,7 +72,6 @@ class HomeViewController: UIViewController {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
         self.view.addSubview(stackView)
-        self.view.addSubview(logoutButton)
         
         [
             topControlView.heightAnchor.constraint(equalToConstant: 100),
@@ -89,25 +82,6 @@ class HomeViewController: UIViewController {
             stackView.leftAnchor.constraint(equalTo: view.leftAnchor),
             stackView.rightAnchor.constraint(equalTo: view.rightAnchor)]
             .forEach {$0.isActive = true}
-        
-        logoutButton.anchor(bottom: view.bottomAnchor,left: view.leftAnchor,bottomPadding: 10,leftPadding: 10)
-        logoutButton.addTarget(self, action: #selector(tappedLogoutButton), for: .touchUpInside)
-    }
-
-    @objc private func tappedLogoutButton(){
-        
-        do{
-            try Auth.auth().signOut()
-                   DispatchQueue.main.asyncAfter(deadline: .now()+0.5){
-                        let registerController = RegisterViewController()
-                        let nav = UINavigationController(rootViewController: registerController)
-                        nav.modalPresentationStyle = .fullScreen
-                        self.present(nav, animated: true)
-                   }
-        } catch {
-            print("You cannot logout your account",error)
-        }
-        
     }
     
     private func setupBidngs(){
@@ -116,7 +90,7 @@ class HomeViewController: UIViewController {
             .asDriver()
             .drive{[weak self] _ in
                 let profile = ProfileViewController()
-                profile.user = self?.user
+                print("tapped profileButton")
                 self?.present(profile, animated: true, completion: nil)
             }
             .disposed(by: disposeBag)
